@@ -14,21 +14,5 @@ Add charlie pc, alice and bob
 hackers
 
 ** External tools **
-wireshark 
+ostinato
 snort
-wireshark -k -i <(ssh -l root <REMOTE HOST> tshark -w - not tcp port 22)
-
-sh root@pyramid \ “tcpdump -nn -i eth1 -w -” | 
-snort -c /etc/snort/snort.conf -r –
-ssh root@example.com tcpdump -w - 'port !22' | wireshark -k -i -
-
-** fix control network **
-??
-
-
-
-** wireshark **
-ssh 192.168.122.198 cat /tmp/pycore.50678/Charlie.conf/Charlie.eth0.pcap | wireshark -k -i -
-
-
-
