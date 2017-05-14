@@ -1,0 +1,2 @@
+virsh  shutdown debian-sir
+
