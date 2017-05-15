@@ -9,7 +9,6 @@ node n1 {
     labelcoords {69.33333333333334 168.33333333333334}
     interface-peer {e0 n5}
     interface-peer {e1 n3}
-    location debian
 }
 
 node n2 {
@@ -23,7 +22,6 @@ node n2 {
     labelcoords {718.0 147.66666666666666}
     interface-peer {e0 n4}
     interface-peer {e1 n6}
-    location debian
 }
 
 node n3 {
@@ -44,7 +42,6 @@ node n3 {
     labelcoords {171.66666666666669 109.0}
     interface-peer {eth0 n1}
     services {zebra RIP vtysh IPForward}
-    location debian
     interface-peer {eth2 n7}
 }
 
@@ -66,7 +63,6 @@ node n4 {
     labelcoords {590.6666666666667 109.0}
     interface-peer {eth1 n2}
     services {zebra RIP vtysh IPForward}
-    location debian
     interface-peer {eth2 n7}
 }
 
@@ -84,7 +80,6 @@ node n5 {
     iconcoords {67.5 319.6666666666667}
     labelcoords {67.5 351.6666666666667}
     interface-peer {eth0 n1}
-    location debian
 }
 
 node n6 {
@@ -101,7 +96,6 @@ node n6 {
     iconcoords {726.3333333333333 327.8333333333333}
     labelcoords {726.3333333333333 359.8333333333333}
     interface-peer {eth0 n2}
-    location debian
     services {DefaultRoute SSH UserDefined}
     custom-config {
 	custom-config-id service:UserDefined
@@ -130,7 +124,6 @@ node n7 {
     iconcoords {374.0 226.0}
     labelcoords {374.0 258.0}
     services {IPForward UserDefined}
-    location debian
     interface-peer {eth0 n3}
     interface-peer {eth1 n4}
     custom-config {
