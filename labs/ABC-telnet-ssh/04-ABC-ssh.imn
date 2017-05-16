@@ -81,6 +81,13 @@ node n5 {
     labelcoords {67.5 351.6666666666667}
     interface-peer {eth0 n1}
     custom-config {
+	custom-config-id service:UserDefined
+	custom-command UserDefined
+	config {
+	dirs=('/home/guest/.ssh', )
+	}
+    }
+    custom-config {
 	custom-config-id service:DefaultRoute
 	custom-command DefaultRoute
 	config {
@@ -97,7 +104,7 @@ node n5 {
 	
 	}
     }
-    services {DefaultRoute}
+    services {DefaultRoute UserDefined}
 }
 
 node n6 {

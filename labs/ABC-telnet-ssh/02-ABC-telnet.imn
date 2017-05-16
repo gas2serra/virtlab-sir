@@ -77,8 +77,8 @@ node n5 {
 	!
     }
     canvas c1
-    iconcoords {67.5 319.6666666666667}
-    labelcoords {67.5 351.6666666666667}
+    iconcoords {71.5 313.6666666666667}
+    labelcoords {71.5 345.6666666666667}
     interface-peer {eth0 n1}
     custom-config {
 	custom-config-id service:DefaultRoute

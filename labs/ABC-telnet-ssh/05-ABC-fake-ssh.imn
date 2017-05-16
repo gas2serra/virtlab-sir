@@ -79,24 +79,14 @@ node n5 {
 	!
     }
     canvas c1
-    iconcoords {73.5 318.6666666666667}
-    labelcoords {73.5 350.6666666666667}
+    iconcoords {75.5 318.6666666666667}
+    labelcoords {75.5 350.6666666666667}
     interface-peer {eth0 n1}
     custom-config {
 	custom-config-id service:UserDefined
 	custom-command UserDefined
 	config {
 	dirs=('/home/guest/.ssh', )
-	files=('/home/guest/.ssh/know_hosts', )
-	}
-    }
-    custom-config {
-	custom-config-id service:UserDefined:/home/guest/.ssh/know_hosts
-	custom-command /home/guest/.ssh/know_hosts
-	config {
-	10.0.1.1 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvOlO4ycV6u6ooKffl1yH5c5LbfSYliR8Z+FvDbirRaaXDN8jW5ytqIk05ohXcr+pFujteGJDK7r74tdNV5pLKCSI4DAkQ1dTnPRXM/jK9OeqRkohvqQ1Dz+xgIkHIYVF1QUurMPuIX/U8/tLtpXPE6zRD5yenjN/D/nGWHRTuUwVmn4+Q0bQyvdFTUyddyf5DXydju2TTEKUiNtHrjS3JAuZ5p8V6qXtH0JPcOsriUk7RSlaOYXXk3t5LAmRcCuKyXYFv5eMkvWNw7CClIvMINgFjqoQox1ClzGEXXTC4SCqkaT4Fa6kbAEj0n3Ncjgj9cHPgCBXyXbMPXdCPi57h alessandro@macro
-	
-	
 	}
     }
     custom-config {
@@ -133,12 +123,13 @@ node n6 {
     iconcoords {725.3333333333333 327.8333333333333}
     labelcoords {725.3333333333333 359.8333333333333}
     interface-peer {eth0 n2}
-    services {DefaultRoute SSH UserDefined}
+    services {DefaultRoute SSH}
     custom-config {
 	custom-config-id service:SSH
 	custom-command SSH
 	config {
 	files=('startsshd.sh', '/etc/ssh/sshd_config', '/etc/ssh/ssh_host_rsa_key', '/etc/ssh/ssh_host_rsa_key.pub', )
+	cmdup=('chmod 600 /etc/ssh/ssh_host_rsa_key', 'sh startsshd.sh', )
 	}
     }
     custom-config {
@@ -240,8 +231,8 @@ node n7 {
 	!
     }
     canvas c1
-    iconcoords {377.0 225.0}
-    labelcoords {377.0 257.0}
+    iconcoords {379.0 225.0}
+    labelcoords {379.0 257.0}
     services {IPForward UserDefined startup Firewall}
     interface-peer {eth0 n3}
     interface-peer {eth1 n4}
@@ -250,7 +241,7 @@ node n7 {
 	custom-command Firewall
 	config {
 	files=('firewall.sh', )
-	cmddown=(' /sbin/ebtables -t nat -D PREROUTING 1', )
+	cmddown=('/sbin/ebtables -t nat -D PREROUTING 1', '/sbin/ebtables -t nat -D PREROUTING 1', '/sbin/ebtables -D FORWARD 1 ', )
 	}
     }
     custom-config {
@@ -292,8 +283,11 @@ node n7 {
 	
 	#ebtables -A FORWARD -p ipv4 -o eth1 --ip-dst 10.0.1.1 -j DROP
 	#ebtables -A FORWARD -p ipv4 -o eth2 --ip-dst 10.0.1.1 -j ACCEPT
-	ebtables -t nat -A PREROUTING -i eth0 -p IPv4 --ip-dst 10.0.1.1 -j dnat --to-dst 00:00:00:00:10:11 
 	
+	ebtables -A FORWARD -p ipv4 -i eth0 -o eth1 --ip-dst 10.0.1.1 -j DROP
+	
+	ebtables -t nat -A PREROUTING -i eth0 -p IPv4 --ip-dst 10.0.1.1 -j dnat --to-dst 00:00:00:00:10:11 
+	ebtables -t nat -A PREROUTING -i eth1 -p IPv4 --ip-dst 10.0.0.1 -j dnat --to-dst 00:00:00:00:10:11
 	}
     }
     custom-config {
@@ -349,13 +343,13 @@ node n8 {
 	hostname FakeBob
 	!
 	interface eth0
-	 ip address 10.0.1.1/24
 	 mac address 00:00:00:00:10:11
+	 ip address 20.0.1.1/24
 	!
     }
     canvas c1
-    iconcoords {372.0 336.0}
-    labelcoords {372.0 368.0}
+    iconcoords {375.0 336.0}
+    labelcoords {375.0 368.0}
     interface-peer {eth0 n7}
     custom-config {
 	custom-config-id service:StaticRoute
@@ -376,7 +370,59 @@ node n8 {
 	#
 	#/sbin/ip route add 10.9.8.0/24 via 10.0.1.1
 	/sbin/ip route add 10.10.10.1/32 dev eth0
+	/sbin/ip route add 10.10.10.2/32 dev eth0
 	/sbin/ip route add 10.0.0.0/24 via 10.10.10.1
+	/sbin/ip route add 10.0.1.0/24 via 10.10.10.2
+	
+	}
+    }
+    custom-config {
+	custom-config-id service:Firewall
+	custom-command Firewall
+	config {
+	files=('firewall.sh', )
+	}
+    }
+    custom-config {
+	custom-config-id service:Firewall:firewall.sh
+	custom-command firewall.sh
+	config {
+	#!/bin/sh
+	# custom node firewall rules for service (security.py)
+	# -------- CUSTOMIZATION REQUIRED --------
+	#
+	# Below are sample iptables firewall rules that you can uncomment and edit.
+	# You can also use ip6tables rules for IPv6.
+	#
+	
+	# start by flushing all firewall rules (so this script may be re-run)
+	#iptables -F
+	
+	# allow traffic related to established connections
+	#iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+	
+	# allow TCP packets from any source destined for 192.168.1.1
+	#iptables -A INPUT -s 0/0 -i eth0 -d 192.168.1.1  -p TCP -j ACCEPT
+	
+	# allow OpenVPN server traffic from eth0
+	#iptables -A INPUT -p udp --dport 1194 -j ACCEPT
+	#iptables -A INPUT -i eth0 -j DROP
+	#iptables -A OUTPUT -p udp --sport 1194 -j ACCEPT
+	#iptables -A OUTPUT -o eth0 -j DROP
+	
+	# allow ICMP ping traffic
+	#iptables -A OUTPUT -p icmp --icmp-type echo-request -j ACCEPT
+	#iptables -A INPUT  -p icmp --icmp-type echo-reply   -j ACCEPT
+	
+	# allow SSH traffic
+	#iptables -A -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+	
+	# drop all other traffic coming in eth0
+	#iptables -A INPUT -i eth0 -j DROP
+	iptables -t nat -A POSTROUTING -d 10.0.1.1 -j SNAT --to-source 10.0.0.1
+	iptables -t nat -A POSTROUTING -d 10.0.0.1 -j SNAT --to-source 10.0.1.1
+	
+	iptables -t nat -A PREROUTING -d 10.0.1.1 -j DNAT --to-destination 20.0.1.1 
 	
 	}
     }
@@ -388,7 +434,7 @@ node n8 {
 	cmddown=('killall inetd', )
 	}
     }
-    services {IPForward StaticRoute SSH}
+    services {IPForward StaticRoute SSH Firewall}
 }
 
 node n9 {
