@@ -1,0 +1,1 @@
+wget -e use_proxy=yes -e http_proxy=192.168.1.10:3128 192.168.2.10

@@ -1,2 +1,2 @@
-virsh  shutdown debian-sir
+virsh  shutdown debian-jessie-sir
 

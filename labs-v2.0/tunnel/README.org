@@ -1,0 +1,11 @@
+* GRE Tunnel
+
+ip tunnel add tun1 mode gre remote 192.168.0.10 local 192.168.3.20
+ip link set tun1 up
+ip addr add 10.0.1.1 dev tun1
+ip route add 10.0.1.0/24 dev tun1
+
+ip tunnel add tun2 mode gre remote 192.168.3.20 local 192.168.0.10  
+ip link set tun2 up
+ip addr add 10.0.1.2 dev tun2 
+ip route add 10.0.1.0/24 dev tun2

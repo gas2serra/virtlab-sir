@@ -1,0 +1,43 @@
+* Loop 
+3 routers - no protocolli dinamici
+1 pc
+
+** Ping
+ping -n -c 1 8.8.8.8
+
+ip route
+
+su - sir
+sudo route add 8.8.8.8 via 192.168.0.2
+...
+** Traceroute
+
+ip route add 192.168.3.0/24 -> ...
+
+tracerote -n 8.8.8.8
+
+* Double routers
+
+** static
+3 lans
+3 routers
+
+ping all
+
+ip route del default
+2 x ip route add ...
+** rip
+Cosa succede se si attiva il rip?
+
+* Two devices
+ip route add default via 192.168.0.1 priority 10
+ip route add default via 192.168.1.1 priority 20
+
+try eth0 down
+add a rule to move toward wifi
+
+
+* TODO
+** ToS
+- use tos to select different routing ...
+- Multiple providers

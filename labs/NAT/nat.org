@@ -1,0 +1,18 @@
+* NAT
+** NAT 01
+*** Router
+ip route add default via 8.1.0.2
+*** Telnet Server
+/usr/sbin/inetd
+*** Port Forwarding
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 23 
+-j DNAT --to-destination 192.168.0.10 
+
+- Try
+telnet to local server
+*** MASQUERADE
+iptables -t nat -A POSTROUTING -o eth1 -p tcp 
+-j MASQUERADE --to-ports 1024-31000
+
+- Try
+telnet to external server
